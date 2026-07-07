@@ -34,6 +34,12 @@ export const PLATFORMS: Record<string, PlatformMeta> = {
   audiomack: { name: "Audiomack", color: "#FFA200", slug: "audiomack" },
 };
 
+/**
+ * Platforms pinned to the featured row at the top of results. When Odesli has
+ * no exact match for one, it appears as a search fallback instead.
+ */
+export const FEATURED_PLATFORMS = ["spotify", "appleMusic", "youtubeMusic", "tidal"];
+
 /** Display order for known platforms; anything unknown is appended after. */
 export const PLATFORM_ORDER = [
   "spotify",

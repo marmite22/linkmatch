@@ -21,10 +21,12 @@ export interface MatchResult {
   pageUrl: string | null;
   links: PlatformLink[];
   /**
-   * "Search on X" fallbacks for high-value platforms Odesli couldn't match —
+   * "Search on X" fallbacks for featured platforms Odesli couldn't match —
    * not direct links to the item, but one tap from it.
    */
   searchLinks: PlatformLink[];
+  /** The query behind the search fallbacks, e.g. "Dethrone Bad Omens". */
+  searchQuery: string | null;
 }
 
 export type OdesliOutcome =
@@ -142,39 +144,41 @@ export async function fetchMatch(url: string): Promise<OdesliOutcome> {
   }
 
   const entity = pickEntity(data);
+  const searchQuery = buildSearchQuery(entity);
   return {
     ok: true,
     result: {
       ...entity,
       pageUrl: data.pageUrl ?? null,
       links,
-      searchLinks: buildSearchLinks(entity, links),
+      searchLinks: searchQuery ? buildSearchLinks(searchQuery, links) : [],
+      searchQuery,
     },
   };
 }
 
-// Platforms popular enough to deserve a search fallback when Odesli has no
-// exact match (its matching to these has visible gaps, especially for newer
-// releases).
+// Search URLs for the featured platforms, used as fallbacks when Odesli has
+// no exact match (its matching to these has visible gaps, especially for
+// newer releases).
 const SEARCH_FALLBACKS: Record<string, (query: string) => string> = {
   spotify: (q) => `https://open.spotify.com/search/${encodeURIComponent(q)}`,
   appleMusic: (q) => `https://music.apple.com/search?term=${encodeURIComponent(q)}`,
   youtubeMusic: (q) => `https://music.youtube.com/search?q=${encodeURIComponent(q)}`,
+  tidal: (q) => `https://listen.tidal.com/search?q=${encodeURIComponent(q)}`,
 };
 
-function buildSearchLinks(
-  entity: Pick<MatchResult, "title" | "artist">,
-  matched: PlatformLink[]
-): PlatformLink[] {
-  if (!entity.title) return [];
+function buildSearchQuery(entity: Pick<MatchResult, "title" | "artist">): string | null {
+  if (!entity.title) return null;
   // "[Explicit]"-style store tags just pollute search queries.
   const query = [entity.title, entity.artist]
     .filter(Boolean)
     .join(" ")
     .replace(/\s*\[[^\]]*\]/g, "")
     .trim();
-  if (!query) return [];
+  return query || null;
+}
 
+function buildSearchLinks(query: string, matched: PlatformLink[]): PlatformLink[] {
   const matchedIds = new Set(matched.map((link) => link.platform));
   return Object.entries(SEARCH_FALLBACKS)
     .filter(([id]) => !matchedIds.has(id))

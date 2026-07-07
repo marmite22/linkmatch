@@ -1,8 +1,9 @@
 "use client";
 
-import { FormEvent, useCallback, useEffect, useState } from "react";
+import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import PlatformIcon from "@/components/PlatformIcon";
-import type { MatchResult } from "@/lib/odesli";
+import type { MatchResult, PlatformLink } from "@/lib/odesli";
+import { FEATURED_PLATFORMS } from "@/lib/platforms";
 
 type Status =
   | { state: "idle" }
@@ -10,9 +11,29 @@ type Status =
   | { state: "error"; message: string }
   | { state: "result"; result: MatchResult; cached: boolean };
 
+// The featured row always shows all four pinned platforms: the exact link
+// when Odesli matched it, otherwise its search fallback.
+function featuredRow(result: MatchResult): { link: PlatformLink; isSearch: boolean }[] {
+  return FEATURED_PLATFORMS.flatMap((id): { link: PlatformLink; isSearch: boolean }[] => {
+    const exact = result.links.find((link) => link.platform === id);
+    if (exact) return [{ link: exact, isSearch: false }];
+    const fallback = (result.searchLinks ?? []).find((link) => link.platform === id);
+    return fallback ? [{ link: fallback, isSearch: true }] : [];
+  });
+}
+
 export default function Home() {
   const [input, setInput] = useState("");
   const [status, setStatus] = useState<Status>({ state: "idle" });
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  function clearInput() {
+    setInput("");
+    const url = new URL(window.location.href);
+    url.searchParams.delete("url");
+    window.history.replaceState(null, "", url.toString());
+    inputRef.current?.focus();
+  }
 
   const runLookup = useCallback(async (url: string) => {
     setStatus({ state: "loading" });
@@ -75,18 +96,31 @@ export default function Home() {
           INSERT LINK
         </label>
         <div className="slot">
-          <input
-            id="music-url"
-            type="url"
-            inputMode="url"
-            placeholder="https://open.spotify.com/track/…"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            disabled={loading}
-            autoComplete="off"
-            spellCheck={false}
-            required
-          />
+          <div className="input-wrap">
+            <input
+              ref={inputRef}
+              id="music-url"
+              type="url"
+              inputMode="url"
+              placeholder="https://open.spotify.com/track/…"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              disabled={loading}
+              autoComplete="off"
+              spellCheck={false}
+              required
+            />
+            {input && !loading && (
+              <button
+                type="button"
+                className="clear-btn"
+                aria-label="Clear link"
+                onClick={clearInput}
+              >
+                ✕
+              </button>
+            )}
+          </div>
           <button type="submit" disabled={loading || !input.trim()}>
             {loading ? "SEARCHING" : "FIND LINKS"}
           </button>
@@ -138,43 +172,53 @@ export default function Home() {
             </div>
           </div>
 
-          <ul className="links">
-            {status.result.links.map((link) => (
+          <ul className="featured-links">
+            {featuredRow(status.result).map(({ link, isSearch }) => (
               <li key={link.platform}>
                 <a
+                  className={isSearch ? "search" : undefined}
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
+                  title={
+                    isSearch
+                      ? `Search ${link.name} for “${status.result.searchQuery}”`
+                      : `Open on ${link.name}`
+                  }
                   style={{ "--brand": link.color } as React.CSSProperties}
                 >
+                  {isSearch && (
+                    <span className="search-glass" aria-hidden="true">⌕</span>
+                  )}
                   <PlatformIcon slug={link.slug} color={link.color} name={link.name} />
                   <span className="link-name">{link.name}</span>
-                  <span className="link-arrow" aria-hidden="true">↗</span>
                 </a>
               </li>
             ))}
           </ul>
 
-          {(status.result.searchLinks ?? []).length > 0 && (
+          {status.result.links.some(
+            (link) => !FEATURED_PLATFORMS.includes(link.platform)
+          ) && (
             <>
-              <p className="search-caption">
-                NO EXACT MATCH FOUND ON THESE — TRY SEARCH
-              </p>
-              <ul className="links search-links">
-                {status.result.searchLinks.map((link) => (
-                  <li key={link.platform}>
-                    <a
-                      href={link.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{ "--brand": link.color } as React.CSSProperties}
-                    >
-                      <PlatformIcon slug={link.slug} color={link.color} name={link.name} />
-                      <span className="link-name">{link.name}</span>
-                      <span className="link-arrow" aria-hidden="true">⌕</span>
-                    </a>
-                  </li>
-                ))}
+              <p className="links-caption">MORE SERVICES</p>
+              <ul className="links">
+                {status.result.links
+                  .filter((link) => !FEATURED_PLATFORMS.includes(link.platform))
+                  .map((link) => (
+                    <li key={link.platform}>
+                      <a
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ "--brand": link.color } as React.CSSProperties}
+                      >
+                        <PlatformIcon slug={link.slug} color={link.color} name={link.name} />
+                        <span className="link-name">{link.name}</span>
+                        <span className="link-arrow" aria-hidden="true">↗</span>
+                      </a>
+                    </li>
+                  ))}
               </ul>
             </>
           )}

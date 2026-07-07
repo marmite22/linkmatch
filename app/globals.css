@@ -129,9 +129,42 @@ body {
   gap: 8px;
 }
 
-.slot input {
+.input-wrap {
+  position: relative;
   flex: 1;
   min-width: 0;
+  display: flex;
+}
+
+/* Extra specificity so the .slot button chassis styling doesn't apply. */
+.slot button.clear-btn {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  box-shadow: none;
+  color: var(--ink-faint);
+  font-size: 13px;
+  line-height: 1;
+  padding: 8px;
+  cursor: pointer;
+  transition: color 0.12s ease;
+}
+
+.slot button.clear-btn:hover {
+  color: var(--ink);
+}
+
+.slot button.clear-btn:active {
+  transform: translateY(-50%);
+}
+
+.slot input {
+  width: 100%;
+  min-width: 0;
+  padding-right: 36px;
   background: var(--bg-inset);
   border: 1px solid var(--line);
   border-radius: 7px;
@@ -341,9 +374,77 @@ body {
   font-size: 13px;
 }
 
-/* search fallbacks — same grid, dashed chassis so they read as "not exact" */
+/* featured row — the big four, always present. Dashed chassis + ⌕ marks a
+   search fallback rather than an exact match. */
 
-.search-caption {
+.featured-links {
+  list-style: none;
+  margin: 16px 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.featured-links a {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 6px 11px;
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--brand, var(--line-bright));
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--ink);
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 500;
+  text-align: center;
+  line-height: 1.25;
+  transition: border-color 0.12s ease, background 0.12s ease, transform 0.05s ease;
+}
+
+.featured-links a:hover {
+  background: #221d15;
+  border-color: var(--line-bright);
+  border-top-color: var(--brand, var(--line-bright));
+}
+
+.featured-links a:active {
+  transform: translateY(1px);
+}
+
+.featured-links .platform-icon {
+  width: 22px;
+  height: 22px;
+}
+
+.featured-links a.search {
+  border-style: dashed;
+  border-top-style: solid;
+  background: transparent;
+  color: var(--ink-dim);
+}
+
+.featured-links a.search:hover {
+  color: var(--ink);
+}
+
+.featured-links a.search .platform-icon {
+  opacity: 0.75;
+}
+
+.search-glass {
+  position: absolute;
+  top: 4px;
+  right: 7px;
+  font-size: 12px;
+  color: var(--ink-faint);
+}
+
+.links-caption {
   margin: 18px 0 0;
   font-family: var(--mono);
   font-size: 9.5px;
@@ -351,23 +452,14 @@ body {
   color: var(--ink-faint);
 }
 
-.search-links {
+.links-caption + .links {
   margin-top: 8px;
 }
 
-.search-links a {
-  border-style: dashed;
-  border-left: 3px solid var(--brand, var(--line-bright));
-  background: transparent;
-  color: var(--ink-dim);
-}
-
-.search-links a:hover {
-  color: var(--ink);
-}
-
-.search-links .platform-icon {
-  opacity: 0.75;
+@media (max-width: 419px) {
+  .featured-links {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .odesli-credit {
