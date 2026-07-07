@@ -1,0 +1,419 @@
+/* LinkMatch — cassette-futurism theme.
+   Warm charcoal chassis, cream labels, amber VFD accents. Subtle, not cosplay. */
+
+:root {
+  --bg: #16130f;
+  --bg-raised: #1f1b15;
+  --bg-inset: #0e0c09;
+  --line: #373127;
+  --line-bright: #4a4335;
+  --ink: #f0e7d4;
+  --ink-dim: #a89c84;
+  --ink-faint: #6f6653;
+  --amber: #ffb347;
+  --amber-deep: #e08c1a;
+  --vfd: #7dffc4;
+  --radius: 10px;
+  --mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background:
+    /* faint horizontal scanlines */
+    repeating-linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.012) 0px,
+      rgba(255, 255, 255, 0.012) 1px,
+      transparent 1px,
+      transparent 3px
+    ),
+    /* soft top glow, like a lit display in a dark room */
+    radial-gradient(120% 60% at 50% 0%, #221d15 0%, var(--bg) 60%);
+  color: var(--ink);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+.shell {
+  max-width: 620px;
+  margin: 0 auto;
+  padding: 48px 20px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ---------- masthead ---------- */
+
+.masthead {
+  text-align: center;
+}
+
+.masthead-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  color: var(--ink-faint);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 5px 12px;
+  margin-bottom: 14px;
+}
+
+.badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--amber);
+  box-shadow: 0 0 6px var(--amber);
+}
+
+.wordmark {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: clamp(34px, 9vw, 48px);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--ink);
+  text-shadow: 0 0 24px rgba(255, 179, 71, 0.18);
+}
+
+.wordmark::after {
+  content: "▮";
+  color: var(--amber);
+  margin-left: 4px;
+  animation: blink 1.4s steps(1) infinite;
+}
+
+.tagline {
+  margin: 10px 0 0;
+  color: var(--ink-dim);
+  font-size: 15px;
+}
+
+/* ---------- input deck ---------- */
+
+.deck {
+  background: linear-gradient(180deg, var(--bg-raised), #1a1611);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 12px 30px rgba(0, 0, 0, 0.35);
+}
+
+.deck-label {
+  display: block;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  color: var(--ink-faint);
+  margin-bottom: 8px;
+}
+
+.slot {
+  display: flex;
+  gap: 8px;
+}
+
+.slot input {
+  flex: 1;
+  min-width: 0;
+  background: var(--bg-inset);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.5);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 14px;
+  padding: 12px 14px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.slot input::placeholder {
+  color: var(--ink-faint);
+}
+
+.slot input:focus {
+  border-color: var(--amber-deep);
+}
+
+.slot input:disabled {
+  opacity: 0.6;
+}
+
+.slot button {
+  background: linear-gradient(180deg, var(--amber), var(--amber-deep));
+  border: 1px solid #8a5a10;
+  border-radius: 7px;
+  color: #241703;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 12px 18px;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 3px 0 #7a4d0b;
+  transition: transform 0.05s ease, box-shadow 0.05s ease, opacity 0.15s ease;
+}
+
+.slot button:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 1px 0 #7a4d0b;
+}
+
+.slot button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.hint {
+  margin: 12px 0 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-faint);
+}
+
+/* ---------- panels ---------- */
+
+.panel {
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 18px;
+}
+
+.panel.vfd {
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  color: var(--vfd);
+  background: #0b120d;
+  border-color: #1e352a;
+  text-shadow: 0 0 8px rgba(125, 255, 196, 0.5);
+}
+
+.blink {
+  animation: blink 0.9s steps(1) infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.panel.error {
+  color: #ffb4a3;
+  border-color: #59352c;
+  background: #201512;
+  font-size: 14.5px;
+  line-height: 1.5;
+}
+
+/* ---------- result ---------- */
+
+.now-playing {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  padding-bottom: 16px;
+  border-bottom: 1px dashed var(--line-bright);
+}
+
+.artwork {
+  width: 84px;
+  height: 84px;
+  border-radius: 8px;
+  border: 1px solid var(--line-bright);
+  object-fit: cover;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+  flex-shrink: 0;
+}
+
+.meta {
+  min-width: 0;
+}
+
+.type-chip,
+.cache-chip {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.2em;
+  border: 1px solid var(--line-bright);
+  border-radius: 4px;
+  padding: 2px 7px;
+  color: var(--ink-faint);
+}
+
+.cache-chip {
+  margin-top: 8px;
+  color: var(--vfd);
+  border-color: #1e352a;
+}
+
+.title {
+  margin: 7px 0 2px;
+  font-size: 19px;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.artist {
+  margin: 0;
+  color: var(--ink-dim);
+  font-size: 14.5px;
+}
+
+.links {
+  list-style: none;
+  margin: 16px 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+@media (min-width: 480px) {
+  .links {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.links a {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--brand, var(--line-bright));
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--ink);
+  text-decoration: none;
+  font-size: 14.5px;
+  font-weight: 500;
+  transition: border-color 0.12s ease, background 0.12s ease, transform 0.05s ease;
+}
+
+.links a:hover {
+  background: #221d15;
+  border-color: var(--line-bright);
+  border-left-color: var(--brand, var(--line-bright));
+}
+
+.links a:active {
+  transform: translateY(1px);
+}
+
+.platform-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.link-name {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.link-arrow {
+  color: var(--ink-faint);
+  font-size: 13px;
+}
+
+/* search fallbacks — same grid, dashed chassis so they read as "not exact" */
+
+.search-caption {
+  margin: 18px 0 0;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.2em;
+  color: var(--ink-faint);
+}
+
+.search-links {
+  margin-top: 8px;
+}
+
+.search-links a {
+  border-style: dashed;
+  border-left: 3px solid var(--brand, var(--line-bright));
+  background: transparent;
+  color: var(--ink-dim);
+}
+
+.search-links a:hover {
+  color: var(--ink);
+}
+
+.search-links .platform-icon {
+  opacity: 0.75;
+}
+
+.odesli-credit {
+  margin: 14px 0 0;
+  font-size: 12px;
+  color: var(--ink-faint);
+}
+
+.odesli-credit a,
+.footnote a {
+  color: var(--ink-dim);
+  text-underline-offset: 3px;
+}
+
+/* ---------- footer ---------- */
+
+.footnote {
+  text-align: center;
+}
+
+.footnote p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--ink-faint);
+}
+
+@media (max-width: 420px) {
+  .shell {
+    padding-top: 36px;
+  }
+
+  .slot {
+    flex-direction: column;
+  }
+
+  .slot button {
+    padding: 13px 18px;
+  }
+
+  .now-playing {
+    align-items: flex-start;
+  }
+
+  .artwork {
+    width: 68px;
+    height: 68px;
+  }
+}
