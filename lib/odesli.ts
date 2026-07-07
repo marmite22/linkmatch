@@ -165,6 +165,9 @@ const SEARCH_FALLBACKS: Record<string, (query: string) => string> = {
   appleMusic: (q) => `https://music.apple.com/search?term=${encodeURIComponent(q)}`,
   youtubeMusic: (q) => `https://music.youtube.com/search?q=${encodeURIComponent(q)}`,
   tidal: (q) => `https://listen.tidal.com/search?q=${encodeURIComponent(q)}`,
+  // Odesli never returns Qobuz (it doesn't index it), so this is always a
+  // search fallback; www.qobuz.com has no search page, the web player does.
+  qobuz: (q) => `https://play.qobuz.com/search?q=${encodeURIComponent(q)}`,
 };
 
 function buildSearchQuery(entity: Pick<MatchResult, "title" | "artist">): string | null {

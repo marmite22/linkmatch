@@ -31,6 +31,8 @@ export const PLATFORMS: Record<string, PlatformMeta> = {
   amazonStore: { name: "Amazon", color: "#FF9900" },
   anghami: { name: "Anghami", color: "#B478FF" },
   boomplay: { name: "Boomplay", color: "#4AC6E0" },
+  // Odesli doesn't index Qobuz, so it only ever appears as a search fallback.
+  qobuz: { name: "Qobuz", color: "#5C7CFA" },
   audiomack: { name: "Audiomack", color: "#FFA200", slug: "audiomack" },
 };
 

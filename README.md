@@ -4,7 +4,7 @@ Paste a music link from one streaming service, get matching links on all the oth
 
 Powered by the [Odesli](https://odesli.co) (song.link) API. Paste a track, album, or playlist link from Spotify, Apple Music, YouTube Music, Tidal, Deezer, Amazon Music, etc., and LinkMatch shows the same item on every service Odesli can find — with title, artist, and artwork.
 
-> Qobuz is not supported: Odesli doesn't index it.
+> Odesli doesn't index Qobuz, so Qobuz always appears as a search fallback rather than an exact link.
 
 **Shareable results:** a successful search puts the looked-up link in the address bar (`/?url=…`), so you can copy the browser URL and send it to friends — they land on the same results page (usually served straight from cache, costing zero API calls). Platforms Odesli can't match exactly (often Spotify / Apple Music / YouTube Music) get "try search" fallback links built from the title and artist.
 

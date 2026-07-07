@@ -197,20 +197,27 @@ export default function Home() {
             ))}
           </ul>
 
-          {status.result.links.some(
-            (link) => !FEATURED_PLATFORMS.includes(link.platform)
-          ) && (
-            <>
-              <p className="links-caption">MORE SERVICES</p>
-              <ul className="links">
-                {status.result.links
-                  .filter((link) => !FEATURED_PLATFORMS.includes(link.platform))
-                  .map((link) => (
+          {(() => {
+            const moreExact = status.result.links.filter(
+              (link) => !FEATURED_PLATFORMS.includes(link.platform)
+            );
+            // Non-featured search fallbacks (currently just Qobuz, which
+            // Odesli never matches exactly) join the end of the list.
+            const moreSearch = (status.result.searchLinks ?? []).filter(
+              (link) => !FEATURED_PLATFORMS.includes(link.platform)
+            );
+            if (moreExact.length === 0 && moreSearch.length === 0) return null;
+            return (
+              <>
+                <p className="links-caption">MORE SERVICES</p>
+                <ul className="links">
+                  {moreExact.map((link) => (
                     <li key={link.platform}>
                       <a
                         href={link.url}
                         target="_blank"
                         rel="noopener noreferrer"
+                        title={`Open on ${link.name}`}
                         style={{ "--brand": link.color } as React.CSSProperties}
                       >
                         <PlatformIcon slug={link.slug} color={link.color} name={link.name} />
@@ -219,9 +226,26 @@ export default function Home() {
                       </a>
                     </li>
                   ))}
-              </ul>
-            </>
-          )}
+                  {moreSearch.map((link) => (
+                    <li key={link.platform}>
+                      <a
+                        className="search"
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title={`Search ${link.name} for “${status.result.searchQuery}”`}
+                        style={{ "--brand": link.color } as React.CSSProperties}
+                      >
+                        <PlatformIcon slug={link.slug} color={link.color} name={link.name} />
+                        <span className="link-name">{link.name}</span>
+                        <span className="link-arrow" aria-hidden="true">⌕</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            );
+          })()}
 
           {status.result.pageUrl && (
             <p className="odesli-credit">
@@ -240,7 +264,7 @@ export default function Home() {
           <a href="https://odesli.co" target="_blank" rel="noopener noreferrer">
             Odesli
           </a>
-          . Qobuz isn&apos;t supported yet — Odesli doesn&apos;t index it.
+          .
         </p>
       </footer>
     </main>
